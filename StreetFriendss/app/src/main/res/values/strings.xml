@@ -2,4 +2,13 @@
     <string name="app_name">StreetFriendss</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nameHint">Ime</string>
+    <string name="lastNameHint">Prezime</string>
+    <string name="usernameHint">Korisnicko Ime</string>
+    <string name="phoneHint">Broj Telfona</string>
+    <string name="password2Hint">Potvrdi Sifru</string>
+    <string name="passwordHint">Sifra</string>
+    <string name="add_image">Izaberi Sliku</string>
+    <string name="register">Registruj se</string>
+    <string name="registerText">Registracija</string>
 </resources>
