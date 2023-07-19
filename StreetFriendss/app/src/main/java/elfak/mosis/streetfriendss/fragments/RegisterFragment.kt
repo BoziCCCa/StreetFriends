@@ -1,6 +1,7 @@
 package elfak.mosis.streetfriendss.fragments
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -14,6 +15,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -30,6 +32,7 @@ import java.security.MessageDigest
 class RegisterFragment : Fragment() {
 
 
+    private lateinit var progressDialog: ProgressDialog
     private val random = Random(System.currentTimeMillis())
     private var selectedImageUri: Uri?=null
     private var databaseUser: DatabaseReference?=null
@@ -40,6 +43,12 @@ class RegisterFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setMessage("Registrovanje: 0 %")
+        progressDialog.setCancelable(false)
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+        progressDialog.progress = 0
+        progressDialog.max = 100
     }
 
     override fun onCreateView(
@@ -62,6 +71,9 @@ class RegisterFragment : Fragment() {
         }
         binding.buttonRegister.setOnClickListener{
             register() }
+        binding.textView.setOnClickListener{
+            Navigation.findNavController(binding.root).navigate(R.id.action_registerFragment_to_loginFragment)
+        }
 
     }
     private fun openGallery()
@@ -70,7 +82,6 @@ class RegisterFragment : Fragment() {
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE_REQUEST)
-
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -101,14 +112,14 @@ class RegisterFragment : Fragment() {
         val firstName = editFirstName.text.toString()
         val lastName = editLastName.text.toString()
         val username = editUsername.text.toString()
-        val password1 = editPassword1.text.toString()
-        val password2 = editPassword2.text.toString()
+        val password1 = hashPassword(editPassword1.text.toString())
+        val password2 = hashPassword(editPassword2.text.toString())
         val phoneNumber = editPhoneNumber.text.toString()
 
         if (firstName!="" && lastName!=""  && username!="" && password1!="" && password2!="" && phoneNumber!="" && selectedImageUri!=null )
         {
             databaseUser =
-                FirebaseDatabase.getInstance().getReference()
+                FirebaseDatabase.getInstance().getReference("Users")
 
             val storageRef= FirebaseStorage.getInstance().getReference();
             val stringBuilder = StringBuilder()
@@ -117,6 +128,7 @@ class RegisterFragment : Fragment() {
                 stringBuilder.append(randomDigit)
             }
             if (selectedImageUri!=null) {
+                progressDialog.show()
                 val fileRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
                 fileRef.putFile(selectedImageUri!!)
                     .addOnSuccessListener {
@@ -124,10 +136,11 @@ class RegisterFragment : Fragment() {
                         fileRef.downloadUrl.addOnSuccessListener { uri ->
                             val activityObj: Activity? = this.activity
                             val user = User(firstName, lastName, username, password1, phoneNumber,uri.toString())
-                            val userKey = databaseUser?.push()?.key // Generate a unique key for the new object
-                            if (userKey != null) {
-                                databaseUser?.child(userKey)?.setValue(user)
+                            if (user.username != null) {
+                                databaseUser?.child(user.username )?.setValue(user)
                                     ?.addOnSuccessListener {
+                                        clearInputs()
+                                        Navigation.findNavController(binding.root).navigate(R.id.action_registerFragment_to_loginFragment)
                                         Toast.makeText(activityObj, "Uspesno kreiran", Toast.LENGTH_LONG).show()
                                     }
                                     ?.addOnFailureListener {
@@ -139,9 +152,17 @@ class RegisterFragment : Fragment() {
                             }
                         }
                     }
+                    .addOnProgressListener { taskSnapshot ->
+                        val percent = ((100 * taskSnapshot.bytesTransferred) / taskSnapshot.totalByteCount).toInt()
+                        progressDialog.progress = percent
+                        progressDialog.setMessage("Registrovanje: $percent %")
+                    }
                     .addOnFailureListener {
                         val activityObj: Activity? = this.activity
                         Toast.makeText(activityObj, "Doslo je do greske prilikom uploadovanja slike", Toast.LENGTH_LONG).show()
+                    }
+                    .addOnCompleteListener { task ->
+                        progressDialog.dismiss()
                     }
             }
         }
@@ -191,7 +212,16 @@ class RegisterFragment : Fragment() {
         }
 
 
-
+    private fun clearInputs()
+    {
+        binding.editTextIme.text!!.clear()
+        binding.editTextPrezime.text!!.clear()
+        binding.editTextKorisnickoIme.text!!.clear()
+        binding.editTextSifra.text!!.clear()
+        binding.editTextSifra2.text!!.clear()
+        binding.editTextPhoneNumber.text!!.clear()
+        binding.imageView.setImageResource(R.drawable.avatar)
+    }
 
 
     private fun showMessage(message: String)
