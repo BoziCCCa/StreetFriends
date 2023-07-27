@@ -14,6 +14,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import com.google.firebase.database.DatabaseReference
@@ -58,6 +59,7 @@ class RegisterFragment : Fragment() {
 
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
 
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
 
         return binding.root
 
@@ -137,16 +139,27 @@ class RegisterFragment : Fragment() {
                             val activityObj: Activity? = this.activity
                             val user = User(firstName, lastName, username, password1, phoneNumber,uri.toString())
                             if (user.username != null) {
-                                databaseUser?.child(user.username )?.setValue(user)
-                                    ?.addOnSuccessListener {
-                                        clearInputs()
-                                        Navigation.findNavController(binding.root).navigate(R.id.action_registerFragment_to_loginFragment)
-                                        Toast.makeText(activityObj, "Uspesno kreiran", Toast.LENGTH_LONG).show()
+                                val databaseUser = FirebaseDatabase.getInstance().getReference("Users")
+                                databaseUser.child(username).get().addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        val dataSnapshot = task.result
+                                        if (dataSnapshot.exists()) {
+                                            Toast.makeText(activityObj, "Vec postoji nalog sa tim usernameom", Toast.LENGTH_LONG).show()
+                                        }
+                                        else
+                                        {
+                                            databaseUser?.child(user.username)?.setValue(user)
+                                                ?.addOnSuccessListener {
+                                                    Navigation.findNavController(binding.root).navigate(R.id.action_registerFragment_to_loginFragment)
+                                                    Toast.makeText(activityObj, "Uspesno registrovan korisnik", Toast.LENGTH_LONG).show()
+                                                }
+                                                ?.addOnFailureListener {
+                                                    Toast.makeText(activityObj, "Bezuspesno registrovanje", Toast.LENGTH_LONG).show()
+                                                }
+                                        }
                                     }
-                                    ?.addOnFailureListener {
-                                        Toast.makeText(activityObj, "Bezuspesno registrovanje", Toast.LENGTH_LONG).show()
-                                    }
-                            } else {
+                                }
+                            }else {
                                 val activityObj: Activity? = this.activity
                                 Toast.makeText(activityObj, "Unesite sve podatke", Toast.LENGTH_LONG).show()
                             }
@@ -187,30 +200,6 @@ class RegisterFragment : Fragment() {
         }
         return String(hexChars)
     }
-    private fun uploadToFirebase()
-    {
-        val storageRef= FirebaseStorage.getInstance().getReference();
-        val stringBuilder = StringBuilder()
-        for (i in 1..50) {
-            val randomDigit = random.nextInt(10)
-            stringBuilder.append(randomDigit)
-        }
-            if (selectedImageUri!=null) {
-                val fileRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
-                fileRef.putFile(selectedImageUri!!)
-                    .addOnSuccessListener {
-
-                        fileRef.downloadUrl.addOnSuccessListener { uri ->
-                            downloadUrl = uri.toString()
-                            showMessage(uri.toString())
-                        }
-                    }
-                    .addOnFailureListener {
-                        showMessage("Doslo je do greske prilikom uploadovanja slike")
-                    }
-            }
-        }
-
 
     private fun clearInputs()
     {
@@ -230,6 +219,6 @@ class RegisterFragment : Fragment() {
         Toast.makeText(activityObj, message, Toast.LENGTH_SHORT).show()
     }
     companion object {
-        private const val PICK_IMAGE_REQUEST = 1
+        const val PICK_IMAGE_REQUEST = 1
     }
 }

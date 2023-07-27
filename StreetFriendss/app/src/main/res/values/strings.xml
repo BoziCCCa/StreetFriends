@@ -13,4 +13,11 @@
     <string name="registerText">Registracija</string>
     <string name="login">Log in</string>
     <string name="registerNow">Nemate nalog? Registrujte se!</string>
+    <string name="MAPS_API_KEY">AIzaSyCrfvEH-323BNkXXEe-mQcFgtXfZVAgTKI</string>
+    <string name="dodaj">Dodaj</string>
+    <string name="dodavanjeTekst">Dodavanje lutalice</string>
+    <string name="strayNameHint">Naziv</string>
+    <string name="strayDescHint">Opis</string>
+    <string name="addComment">Komentar</string>
+    <string name="addCommentButton">Dodaj komentar</string>
 </resources>

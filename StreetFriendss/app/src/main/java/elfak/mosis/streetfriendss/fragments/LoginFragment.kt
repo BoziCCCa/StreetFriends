@@ -10,16 +10,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import elfak.mosis.streetfriendss.R
 import elfak.mosis.streetfriendss.databinding.FragmentLoginBinding
+import elfak.mosis.streetfriendss.viewmodels.LoggedUserViewModel
 import java.security.MessageDigest
 
 
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
+    private val loggedUserViewModel: LoggedUserViewModel by activityViewModels()
     private val binding get() = _binding!!
     private lateinit var databaseUser: DatabaseReference
 
@@ -35,6 +40,7 @@ class LoginFragment : Fragment() {
     ): View? {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
 
         return binding.root
     }
@@ -56,9 +62,11 @@ class LoginFragment : Fragment() {
         }
 
     }
-    private fun saveLoginState() {
+    private fun saveLoginState(username: String, password: String) {
         val sharedPreferences = requireContext().getSharedPreferences("StreetFriends", Context.MODE_PRIVATE)
         sharedPreferences.edit().putBoolean("isLoggedIn", true).apply()
+        sharedPreferences.edit().putString("username",username ).apply()
+        sharedPreferences.edit().putString("password",password ).apply()
     }
     private fun login(){
         val editUsername = binding.username
@@ -76,7 +84,7 @@ class LoginFragment : Fragment() {
                         val sifra2 = dataSnapshot.child("password").getValue(String::class.java)
                         if(sifra2==sifra)
                         {
-                            saveLoginState()
+                            saveLoginState(username,sifra)
                             Toast.makeText(this.activity,"Uspesno logovanje",Toast.LENGTH_SHORT).show()
                             Navigation.findNavController(binding.root).navigate(R.id.action_loginFragment_to_homeFragment)
                         }else{
@@ -116,6 +124,12 @@ class LoginFragment : Fragment() {
             hexChars[i * 2 + 1] = hexArray[v and 0x0F]
         }
         return String(hexChars)
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Restore the visibility of the toolbar when the fragment is destroyed
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
+        _binding = null
     }
     companion object {
 

@@ -1,5 +1,7 @@
 package elfak.mosis.streetfriendss.classes
 
+import java.util.Date
+
 data class User(
     val firstName: String,
     val lastName: String,
@@ -9,4 +11,15 @@ data class User(
     var imageUrl:String,
     var rang: Int=0,
     var points: Int=0
-)
+){
+    constructor() : this(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        0,
+        0,
+    )
+}
