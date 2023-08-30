@@ -69,6 +69,10 @@ class LeaderboardFragment : Fragment() {
                 this.findNavController().navigate(R.id.action_leaderboardFragment_to_homeFragment)
                 true
             }
+            R.id.action_show_profile->{
+                this.findNavController().navigate(R.id.action_leaderboardFragment_to_profileFragment)
+                true
+            }
             else->super.onContextItemSelected(item)
         }
     }

@@ -75,7 +75,6 @@ class StrayAdapter(private val context: Context, private val strayListLiveData: 
 
     fun updateStrayList(newList: List<StrayAnimal>) {
         strayList = newList
-        Log.d("IZMENA",strayList.size.toString())
         notifyDataSetChanged()
     }
 }

@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_homeFragment_to_strayListFragment"
             app:destination="@id/strayListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/addStrayFragment"
@@ -91,6 +94,9 @@
         <action
             android:id="@+id/action_leaderboardFragment_to_strayListFragment"
             app:destination="@id/strayListFragment" />
+        <action
+            android:id="@+id/action_leaderboardFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/strayListFragment"
@@ -109,6 +115,9 @@
         <action
             android:id="@+id/action_strayListFragment_to_filterFragment"
             app:destination="@id/filterFragment" />
+        <action
+            android:id="@+id/action_strayListFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <dialog
         android:id="@+id/filterFragment"
@@ -119,4 +128,22 @@
             android:id="@+id/action_filterFragment_to_strayListFragment"
             app:destination="@id/strayListFragment" />
     </dialog>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="elfak.mosis.streetfriendss.fragments.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_strayListFragment"
+            app:destination="@id/strayListFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_leaderboardFragment"
+            app:destination="@id/leaderboardFragment" />
+    </fragment>
 </navigation>

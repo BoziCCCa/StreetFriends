@@ -72,6 +72,9 @@ class FilterFragment : DialogFragment() {
         if(date==Date())
             date=null
         strayViewModel.filterStrays(name,type,date,radius,loggedUserViewModel.location?.latitude,loggedUserViewModel.location?.longitude)
+
+
+        dismiss()
     }
     override fun onStart() {
         super.onStart()

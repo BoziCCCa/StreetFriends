@@ -22,8 +22,9 @@ class LeaderboardAdapter(private val context:Context,private val userList: List<
     }
 
     override fun getItemId(p0: Int): Long {
-        TODO("Not yet implemented")
+        return 0;
     }
+
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var myView = convertView
