@@ -233,6 +233,7 @@ class StrayInfoFragment : DialogFragment() {
                 databaseUser.child(ownerUsername).child("points").setValue(total)
             }
 
+
             strayViewModel.addReviewToAnimal(review)
             binding.commentEditText.text?.clear()
             binding.star1.setImageResource(R.drawable.baseline_star_border_24)

@@ -1,14 +1,11 @@
 package elfak.mosis.streetfriendss.viewmodels
 
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -34,16 +31,16 @@ class StrayAnimalViewModel: ViewModel() {
     private var originalStraysList: List<StrayAnimal> = emptyList()
 
 
-    private fun getDistance(currentLat: Double, currentLon: Double, deviceLat: Double, deviceLon: Double): Double {
+    private fun getDistance(currentLat: Double, currentLon: Double, strayLat: Double, strayLon: Double): Double {
         val earthRadius = 6371000.0
 
         val currentLatRad = Math.toRadians(currentLat)
-        val deviceLatRad = Math.toRadians(deviceLat)
-        val deltaLat = Math.toRadians(deviceLat - currentLat)
-        val deltaLon = Math.toRadians(deviceLon - currentLon)
+        val strayLatRad = Math.toRadians(strayLat)
+        val deltaLat = Math.toRadians(strayLat - currentLat)
+        val deltaLon = Math.toRadians(strayLon - currentLon)
 
         val a = sin(deltaLat / 2) * sin(deltaLat / 2) +
-                cos(currentLatRad) * cos(deviceLatRad) *
+                cos(currentLatRad) * cos(strayLatRad) *
                 sin(deltaLon / 2) * sin(deltaLon / 2)
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
